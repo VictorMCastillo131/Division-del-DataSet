@@ -1,0 +1,26 @@
+# Archivos de Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Archivos de entorno
+.env
+venv/
+env/
+*.sqlite3
+
+# Archivos de configuración del sistema
+.DS_Store
+Thumbs.db
+
+# Archivos estáticos y media
+/media/
+staticfiles/
+
+# Archivos de logs
+*.log
+
+# Migraciones (opcional si no quieres subirlas)
+*/migrations/__pycache__/
+*/migrations/*.py

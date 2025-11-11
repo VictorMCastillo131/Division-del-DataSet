@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>División y gráficas </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{
+      --bg:#0f1113; --card:#14161a; --accent:#f7fdfb; --muted:#a6a6a6; --glass: rgba(255,255,255,0.03);
+    }
+    body{margin:0;font-family:Inter, system-ui, Arial; background:var(--bg); color:#e9eef1;}
+    .container{max-width:1200px;margin:30px auto;padding:20px;}
+    header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    h1{margin:0;color:var(--accent)}
+    .uploader{background:var(--card); padding:18px;border-radius:12px; box-shadow: 0 6px 18px rgba(0,0,0,0.6); display:flex; gap:16px; align-items:center; flex-wrap:wrap;}
+    .file-input{flex:1; display:flex; gap:8px; align-items:center;}
+    .file-input input[type=file]{display:block}
+    .actions{display:flex; gap:8px;}
+    button{background:var(--accent);color:#041014;border:none;padding:10px 14px;border-radius:8px;font-weight:600;cursor:pointer}
+    button.secondary{background:transparent;border:1px solid rgba(255,255,255,0.06); color:var(--muted)}
+    .stats{display:flex; gap:12px; margin-top:18px; flex-wrap:wrap}
+    .stat{background:var(--glass); padding:12px;border-radius:10px; min-width:140px; text-align:left;}
+    .grid{display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:16px; margin-top:20px}
+    .card{background:var(--card); padding:14px; border-radius:10px; text-align:center;}
+    .card h3{margin:6px 0;color:var(--accent)}
+    .desc{color:var(--muted); font-size:13px;margin-bottom:10px}
+    img.plot{width:100%; height:auto; border-radius:8px; border:1px solid rgba(255,255,255,0.03)}
+    .table-preview{margin-top:18px; overflow:auto; background:#0b0c0d; padding:12px; border-radius:8px}
+    table{width:100%; border-collapse:collapse; color:#ddd}
+    table th, table td{padding:6px;border-bottom:1px solid rgba(255,255,255,0.03); text-align:left}
+    footer{margin-top:28px; text-align:center; color:var(--muted); font-size:13px}
+    @media (max-width:600px){
+      header{flex-direction:column; align-items:flex-start}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>División del dataset y visualización • Fokin Vaporrub</h1>
+      <div style="text-align:right;color:var(--muted);font-size:13px">Sube NSL_KDD o similar (.csv .txt .data)</div>
+    </header>
+
+    <section class="uploader" style="margin-top:18px">
+      <form method="post" enctype="multipart/form-data" style="display:flex; width:100%; gap:12px; align-items:center;">
+        {% csrf_token %}
+        <div class="file-input">
+          <input type="file" name="file" accept=".csv,.txt,.data" required>
+        </div>
+        <div class="actions">
+          <button type="submit">Procesar dataset</button>
+          <button type="button" class="secondary" onclick="window.location.href='/'">Reiniciar</button>
+        </div>
+      </form>
+    </section>
+
+    {% if error %}
+      <div style="margin-top:14px; color:#ff6b6b; font-weight:600;">{{ error }}</div>
+    {% endif %}
+
+    {% if total_rows %}
+      <div class="stats">
+        <div class="stat"><strong>Total filas</strong><div style="font-size:18px">{{ total_rows }}</div></div>
+        <div class="stat"><strong>Train</strong><div style="font-size:18px">{{ train_rows }}</div></div>
+        <div class="stat"><strong>Validación</strong><div style="font-size:18px">{{ val_rows }}</div></div>
+        <div class="stat"><strong>Test</strong><div style="font-size:18px">{{ test_rows }}</div></div>
+        <div class="stat"><strong>Columna graficada</strong><div style="font-size:14px">{{ protocol_column }}</div></div>
+      </div>
+
+      <div class="table-preview">
+        <h3 style="margin:0 0 8px 0;color:var(--accent)">Vista previa (primeras filas)</h3>
+        {{ sample_data|safe }}
+      </div>
+
+      <div class="grid" aria-live="polite">
+        <!-- DF -->
+        <div class="card">
+          <h3>{{ title_df }}</h3>
+          <p class="desc">{{ desc_df }}</p>
+          <img class="plot" src="{{ plot_df }}" alt="{{ title_df }}">
+        </div>
+
+        <!-- TRAIN -->
+        <div class="card">
+          <h3>{{ title_train }}</h3>
+          <p class="desc">{{ desc_train }}</p>
+          <img class="plot" src="{{ plot_train }}" alt="{{ title_train }}">
+        </div>
+
+        <!-- TEST -->
+        <div class="card">
+          <h3>{{ title_test }}</h3>
+          <p class="desc">{{ desc_test }}</p>
+          <img class="plot" src="{{ plot_test }}" alt="{{ title_test }}">
+        </div>
+
+        <!-- VAL -->
+        <div class="card">
+          <h3>{{ title_val }}</h3>
+          <p class="desc">{{ desc_val }}</p>
+          <img class="plot" src="{{ plot_val }}" alt="{{ title_val }}">
+        </div>
+      </div>
+    {% endif %}
+
+    <footer>
+      <div></div>
+      <div style="margin-top:6px;color:var(--muted)"></div>
+    </footer>
+  </div>
+</body>
+</html>
